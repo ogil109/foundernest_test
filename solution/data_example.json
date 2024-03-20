@@ -1,0 +1,40 @@
+{
+    "date": "2024-01-02T00:00:00Z",
+    "country": "United States",
+    "data": {
+        "group_first_event": {},
+        "group_ids": {},
+        "path": "/2/httpapi",
+        "user_properties_updated": true
+    },
+    "language": "English",
+    "event_type": "gQNksnEAon2fFPVu9r0vKQ==",
+    "app": 447268,
+    "device_id": "9d92497d-0bbe-4340-833c-433fbce1294b",
+    "server_upload_time": 1704228342,
+    "server_received_time": 1704228342,
+    "user_id": 227112,
+    "region": "Illinois",
+    "processed_time": 1704228343,
+    "city": "Wilmette",
+    "user_properties": {
+        "admin-dashboard-metabase": true,
+        "explore": true,
+        "explore-companies": true,
+        "explore_prompt_validation": true,
+        "initial_li_fat_id": "EMPTY",
+        "initial_rtd_cid": "EMPTY",
+        "subspaces": true,
+        "user_corporate_id": 1,
+        "user_corporate_is_demo": true,
+        "user_corporate_status": "active",
+        "user_role": "member",
+        "user_signup_date": "2023-10-26T15:42:53.106Z",
+        "user_status": "active"
+    },
+    "client_event_time": 1704228339,
+    "client_upload_time": 1704228342,
+    "amp_id": 755218691718,
+    "data_type": "event",
+    "event_time": 1704228339
+}

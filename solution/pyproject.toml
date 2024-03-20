@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "solution"
+version = "1.0"
+description = ""
+authors = ["Óscar Gil Balaguer <hello@oscargilbalaguer.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+requests = "^2.31.0"
+sqlalchemy = "^2.0.28"
+docker = "^7.0.0"
+
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^3.6.2"
+black = "^24.3.0"
+isort = "^5.13.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

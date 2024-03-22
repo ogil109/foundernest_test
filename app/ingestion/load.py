@@ -42,49 +42,50 @@ def parse_date_events(events_data) -> None:
     """
     session = get_session()
     for event_data in events_data:
-        # Create an Event instance for each object in JSON data
-        event = Event(
-            # Event ID
-            amp_id=event_data.get("amp_id"),
-            # Origin
-            user_id=event_data.get("user_id"),
-            device_id=event_data.get("device_id"),
-            app=event_data.get("app"),
-            # Time
-            date=parse_json_date(event_data.get("date")),
-            event_time=event_data.get("event_time"),
-            client_event_time=event_data.get("client_event_time"),
-            client_upload_time=event_data.get("client_upload_time"),
-            processed_time=event_data.get("processed_time"),
-            server_upload_time=event_data.get("server_upload_time"),
-            server_received_time=event_data.get("server_received_time"),
-            # Location
-            country=event_data.get("country"),
-            region=event_data.get("region"),
-            city=event_data.get("city"),
-            language=event_data.get("language"),
-        )
+        # Handle duplicates (same event_time and user_id)
+        if not Event.get_by_event_time_and_user_id(
+            session, event_data.get("event_time"), event_data.get("user_id")
+        ):
+            # Create an Event instance for each unique object in JSON data
+            event = Event(
+                # Event ID
+                event_time=event_data.get("event_time"),
+                user_id=event_data.get("user_id"),
+                # Origin
+                amp_id=event_data.get("amp_id"),
+                device_id=event_data.get("device_id"),
+                app=event_data.get("app"),
+                # Time
+                date=parse_json_date(event_data.get("date")),
+                client_event_time=event_data.get("client_event_time"),
+                client_upload_time=event_data.get("client_upload_time"),
+                processed_time=event_data.get("processed_time"),
+                server_upload_time=event_data.get("server_upload_time"),
+                server_received_time=event_data.get("server_received_time"),
+                # Location
+                country=event_data.get("country"),
+                region=event_data.get("region"),
+                city=event_data.get("city"),
+                language=event_data.get("language"),
+            )
 
-        # Add the Event instance to the session
-        session.add(event)
+            # Add the Event instance to the session
+            session.add(event)
 
-        event_metadata = EventMetadata(
-            amp_id=event_data.get("amp_id"),
-            # Event metadata
-            data_type=event_data.get("data_type"),
-            event_type=event_data.get("event_type"),
-            data=json.dumps(event_data.get("data")),
-        )
+            event_metadata = EventMetadata(
+                event_time=event_data.get("event_time"),
+                user_id=event_data.get("user_id"),
+                # Event metadata
+                data_type=event_data.get("data_type"),
+                event_type=event_data.get("event_type"),
+                data=json.dumps(event_data.get("data")),
+            )
 
-        # Add the EventMetadata instance to the session
-        session.add(event_metadata)
+            # Add the EventMetadata instance to the session
+            session.add(event_metadata)
 
         # Check if the UserProperties instance already exists from another event, if not, create it
-        if not (
-            existing_user_properties := UserProperties.get_by_user_id(
-                session, event_data.get("user_id")
-            )
-        ):
+        if not UserProperties.get_by_user_id(session, event_data.get("user_id")):
             user_properties = UserProperties(
                 # User ID
                 user_id=event_data.get("user_id"),

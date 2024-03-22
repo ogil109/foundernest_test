@@ -16,17 +16,24 @@ Base = declarative_base()
 class Event(Base):
     __tablename__ = "events"
 
-    # Amplitude event ID?
-    amp_id = Column(BigInteger, primary_key=True)
+    # Composite primary key (assuming user cannot have multiple events at the same time)
+    """
+    event_time is unique in dataset, but lacks robustness as one and only primary key
+
+    A composite primary key (assuming user cannot have multiple events at the same time) is more robust
+    """
+    event_time = Column(BigInteger, primary_key=True)
+    user_id = Column(BigInteger, primary_key=True)
 
     # Origin
-    user_id = Column(BigInteger)
+    amp_id = Column(BigInteger)
     device_id = Column(String)
     app = Column(Integer)
 
     # Time attributes
-    date = Column(DateTime)
-    event_time = Column(BigInteger)
+    date = Column(
+        DateTime
+    )  # Chose not to strp time as even if not currently supported could be useful
     client_event_time = Column(BigInteger)
     client_upload_time = Column(BigInteger)
     processed_time = Column(BigInteger)
@@ -38,6 +45,15 @@ class Event(Base):
     region = Column(String)
     city = Column(String)
     language = Column(String)
+
+    @classmethod
+    def get_by_event_time_and_user_id(cls, session, event_time, user_id):
+        # Class method to fetch an event by event_time and user_id
+        return (
+            session.query(cls)
+            .filter_by(event_time=event_time, user_id=user_id)
+            .one_or_none()
+        )
 
 
 # Assuming user properties are fixed and not dynamic for every event
@@ -65,14 +81,15 @@ class UserProperties(Base):
     @classmethod
     def get_by_user_id(cls, session, user_id):
         # ORM method to get UserProperties by user ID using passed in session
-        return session.query(cls).filter_by(user_id=user_id)
+        return session.query(cls).filter_by(user_id=user_id).one_or_none()
 
 
 class EventMetadata(Base):
     __tablename__ = "event_metadata"
 
     # Event ID
-    amp_id = Column(BigInteger, ForeignKey("events.amp_id"), primary_key=True)
+    event_time = Column(BigInteger, ForeignKey("events.event_time"), primary_key=True)
+    user_id = Column(BigInteger, ForeignKey("events.user_id"), primary_key=True)
 
     # Event metadata
     data_type = Column(String)

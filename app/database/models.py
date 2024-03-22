@@ -62,6 +62,11 @@ class UserProperties(Base):
     user_signup_date = Column(DateTime)
     user_status = Column(String)
 
+    @classmethod
+    def get_by_user_id(cls, session, user_id):
+        # ORM method to get UserProperties by user ID using passed in session
+        return session.query(cls).filter_by(user_id=user_id)
+
 
 class EventMetadata(Base):
     __tablename__ = "event_metadata"

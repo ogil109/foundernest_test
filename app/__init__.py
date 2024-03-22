@@ -1,12 +1,13 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from datetime import datetime, timedelta
 
-from app.database.models import Base
+from app.ingestion.load import get_date_events
 
-# Creating database and engine and opening a session
-engine = create_engine("sqlite:///database/database.db", echo=True)
-Session = sessionmaker(bind=engine)
-session = Session()
 
-# Create tables in the database
-Base.metadata.create_all(engine)
+def load_data() -> None:
+    # Load data from January
+    start_date = datetime(2024, 1, 1)
+    end_date = datetime(2024, 1, 31)
+
+    for dt in range((end_date - start_date).days + 1):
+        date = start_date + timedelta(days=dt)
+        get_date_events(date.strftime("%Y-%m-%d"))

@@ -44,7 +44,7 @@ def parse_date_events(events_data) -> None:
     Parses events from JSON data (list of objects) and creates Event, EventMetadata, and UserProperties instances.
 
     Args:
-        events_data (json): The JSON response containing the user events for a given date.
+        events_data (json): The JSON response containing a list of objects representing the user events for a given date.
     """
     session = get_session()
     for event_data in events_data:

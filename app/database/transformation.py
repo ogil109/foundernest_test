@@ -33,7 +33,7 @@ def get_weekly_active_users() -> None:
     results = cursor.fetchall()
 
     os.makedirs("results", exist_ok=True)
-    with open("results/weekly_active_users.txt", "w") as file:
+    with open("results/weekly_active_users.txt", "w", encoding="utf-8") as file:
         for row in results:
             file.write(f"{row[0]}: {row[1]}\n")
 
@@ -72,7 +72,9 @@ def get_weekly_active_corporate_users() -> None:
     results = cursor.fetchall()
 
     os.makedirs("results", exist_ok=True)
-    with open("results/weekly_active_corporate_users.txt", "w") as file:
+    with open(
+        "results/weekly_active_corporate_users.txt", "w", encoding="utf-8"
+    ) as file:
         for row in results:
             file.write(f"{row[0]}: {row[1]}\n")
 
@@ -126,7 +128,7 @@ def events_stats_users() -> None:
     results = cursor.fetchall()
 
     os.makedirs("results", exist_ok=True)
-    with open("results/events_stats_users.txt", "w") as file:
+    with open("results/events_stats_users.txt", "w", encoding="utf-8") as file:
         for row in results:
             file.write(
                 f"{row[0]} = Avg Events Per User: {row[1]:.2f}, Max Events Per User: {row[2]}, Min Events Per User: {row[3]}\n"
@@ -183,7 +185,9 @@ def events_stats_corporate_users() -> None:
     results = cursor.fetchall()
 
     os.makedirs("results", exist_ok=True)
-    with open("results/events_stats_corporate_users.txt", "w") as file:
+    with open(
+        "results/events_stats_corporate_users.txt", "w", encoding="utf-8"
+    ) as file:
         for row in results:
             file.write(
                 f"{row[0]} = Avg Events Per Corporate User: {row[1]:.2f}, Max Events Per Corporate User: {row[2]}, Min Events Per Corporate User: {row[3]}\n"

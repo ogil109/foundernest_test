@@ -16,12 +16,7 @@ Base = declarative_base()
 class Event(Base):
     __tablename__ = "events"
 
-    # Composite primary key (assuming user cannot have multiple events at the same time)
-    """
-    event_time is unique in dataset, but lacks robustness as one and only primary key
-
-    A composite primary key (assuming user cannot have multiple events at the same time) is more robust
-    """
+    # Composite primary key (assuming user cannot produce multiple events concurrently)
     event_time = Column(BigInteger, primary_key=True)
     user_id = Column(BigInteger, primary_key=True)
 
@@ -48,7 +43,7 @@ class Event(Base):
 
     @classmethod
     def get_by_event_time_and_user_id(cls, session, event_time, user_id):
-        # Class method to fetch an event by event_time and user_id
+        # Class method to fetch an instance by event_time and user_id
         return (
             session.query(cls)
             .filter_by(event_time=event_time, user_id=user_id)
@@ -80,7 +75,7 @@ class UserProperties(Base):
 
     @classmethod
     def get_by_user_id(cls, session, user_id):
-        # ORM method to get UserProperties by user ID using passed in session
+        # ORM method to get UserProperties instance by user ID using passed in session
         return session.query(cls).filter_by(user_id=user_id).one_or_none()
 
 

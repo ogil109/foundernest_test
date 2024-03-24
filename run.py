@@ -8,7 +8,11 @@ from app.database.transformation import (
     get_weekly_active_users,
 )
 
-# Load data (specifying start and end dates)
+"""
+Load data speciying start and end dates.
+
+To save new records for a specific date, use load_date.py
+"""
 start_date = datetime(2024, 1, 1)
 end_date = datetime(2024, 1, 31)
 load_data(start_date, end_date)

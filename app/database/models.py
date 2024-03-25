@@ -28,7 +28,7 @@ class Event(Base):
     # Time attributes
     date = Column(
         Date
-    )  # Chose not to strp time as even if not currently supported could be useful
+    )
     client_event_time = Column(BigInteger)
     client_upload_time = Column(BigInteger)
     processed_time = Column(BigInteger)

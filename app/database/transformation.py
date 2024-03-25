@@ -1,9 +1,11 @@
 import os
 import sqlite3
 
+db_path = os.getenv("DATABASE_PATH", "/results/database.db")
+
 
 def get_weekly_active_users() -> None:
-    conn = sqlite3.connect("database.db")
+    conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
     cursor.execute(
@@ -32,8 +34,8 @@ def get_weekly_active_users() -> None:
     cursor.execute(select_query)
     results = cursor.fetchall()
 
-    os.makedirs("results", exist_ok=True)
-    with open("results/weekly_active_users.txt", "w", encoding="utf-8") as file:
+    os.makedirs("/results", exist_ok=True)
+    with open("/results/weekly_active_users.txt", "w", encoding="utf-8") as file:
         for row in results:
             file.write(f"{row[0]}: {row[1]}\n")
 
@@ -41,7 +43,7 @@ def get_weekly_active_users() -> None:
 
 
 def get_weekly_active_corporate_users() -> None:
-    conn = sqlite3.connect("database.db")
+    conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
     cursor.execute(
@@ -71,9 +73,9 @@ def get_weekly_active_corporate_users() -> None:
     cursor.execute(select_query)
     results = cursor.fetchall()
 
-    os.makedirs("results", exist_ok=True)
+    os.makedirs("/results", exist_ok=True)
     with open(
-        "results/weekly_active_corporate_users.txt", "w", encoding="utf-8"
+        "/results/weekly_active_corporate_users.txt", "w", encoding="utf-8"
     ) as file:
         for row in results:
             file.write(f"{row[0]}: {row[1]}\n")
@@ -82,7 +84,7 @@ def get_weekly_active_corporate_users() -> None:
 
 
 def events_stats_users() -> None:
-    conn = sqlite3.connect("database.db")
+    conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
     cursor.execute(
@@ -127,8 +129,8 @@ def events_stats_users() -> None:
     cursor.execute(select_query)
     results = cursor.fetchall()
 
-    os.makedirs("results", exist_ok=True)
-    with open("results/events_stats_users.txt", "w", encoding="utf-8") as file:
+    os.makedirs("/results", exist_ok=True)
+    with open("/results/events_stats_users.txt", "w", encoding="utf-8") as file:
         for row in results:
             file.write(
                 f"{row[0]} = Avg Events Per User: {row[1]:.2f}, Max Events Per User: {row[2]}, Min Events Per User: {row[3]}\n"
@@ -138,7 +140,7 @@ def events_stats_users() -> None:
 
 
 def events_stats_corporate_users() -> None:
-    conn = sqlite3.connect("database.db")
+    conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
     cursor.execute(
@@ -184,9 +186,9 @@ def events_stats_corporate_users() -> None:
     cursor.execute(select_query)
     results = cursor.fetchall()
 
-    os.makedirs("results", exist_ok=True)
+    os.makedirs("/results", exist_ok=True)
     with open(
-        "results/events_stats_corporate_users.txt", "w", encoding="utf-8"
+        "/results/events_stats_corporate_users.txt", "w", encoding="utf-8"
     ) as file:
         for row in results:
             file.write(

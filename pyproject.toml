@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "solution"
+name = "FounderNest challenge"
 version = "1.0"
-description = ""
+description = "Solution for the FounderNest challenge for Jr Data Engineer position"
 authors = ["Óscar Gil Balaguer <hello@oscargilbalaguer.com>"]
 readme = "README.md"
 

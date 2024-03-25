@@ -1,4 +1,5 @@
 import json
+import os
 from datetime import date, datetime
 from typing import Any
 
@@ -19,7 +20,7 @@ def get_date_events(events_date) -> Any:
         json.Any | None: The JSON response containing the user events, or None if the request fails.
     """
     url = "http://35.212.243.98/user-events"
-    headers = {"api-token": "BGjvhpFqkIFoBCvD0wwP"}
+    headers = {"api-token": os.getenv("API_TOKEN")}
     params = {"date": events_date}
 
     response = requests.get(url, headers=headers, params=params, timeout=10)

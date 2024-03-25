@@ -1,4 +1,5 @@
 if __name__ == "__main__":
+    import os
     import sqlite3
     import sys
     from datetime import datetime
@@ -13,13 +14,14 @@ if __name__ == "__main__":
         sys.exit(1)
 
     load_data(date, date)
-    print(f"Data loaded for {date}.")
+    print(f"\nData loaded for {date}.")
 
     # Print saved events count
-    conn = sqlite3.connect("database.db")
+    db_path = os.getenv("DATABASE_PATH", "/results/database.db")
+    conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     cursor.execute(
         "SELECT COUNT(*) FROM events WHERE date = ?",
         (date.strftime("%Y-%m-%d"),),
     )
-    print(f"\nEvents inserted: {cursor.fetchone()[0]}")
+    print(f"\nEvents captured: {cursor.fetchone()[0]}\n")

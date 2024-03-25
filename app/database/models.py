@@ -3,7 +3,7 @@ from sqlalchemy import (
     BigInteger,
     Boolean,
     Column,
-    DateTime,
+    Date,
     ForeignKey,
     Integer,
     String,
@@ -27,7 +27,7 @@ class Event(Base):
 
     # Time attributes
     date = Column(
-        DateTime
+        Date
     )  # Chose not to strp time as even if not currently supported could be useful
     client_event_time = Column(BigInteger)
     client_upload_time = Column(BigInteger)
@@ -70,7 +70,7 @@ class UserProperties(Base):
     user_corporate_is_demo = Column(Boolean)
     user_corporate_status = Column(String)
     user_role = Column(String)
-    user_signup_date = Column(DateTime)
+    user_signup_date = Column(Date)
     user_status = Column(String)
 
     @classmethod

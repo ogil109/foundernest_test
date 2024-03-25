@@ -6,13 +6,14 @@ if __name__ == "__main__":
     from app import load_data
 
     try:
-        date = datetime.fromisoformat(sys.argv[1])
+        dt = datetime.fromisoformat((sys.argv[1]))
+        date = dt.date()
     except ValueError:
         print("Invalid format. Provide date in ISO format (YYYY-MM-DD).")
         sys.exit(1)
 
     load_data(date, date)
-    print(f"Data loaded for {date}. Rows inserted:")
+    print(f"Data loaded for {date}.")
 
     # Print saved events count
     conn = sqlite3.connect("database.db")
@@ -21,4 +22,4 @@ if __name__ == "__main__":
         "SELECT COUNT(*) FROM events WHERE date = ?",
         (date.strftime("%Y-%m-%d"),),
     )
-    print(f"Events inserted: {cursor.fetchone()[0]}")
+    print(f"\nEvents inserted: {cursor.fetchone()[0]}")

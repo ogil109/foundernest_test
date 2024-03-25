@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any
 
 import requests
@@ -8,30 +8,35 @@ from app.database.models import Event, EventMetadata, UserProperties
 from app.database.session_factory import get_session
 
 
-def get_date_events(date) -> Any:
+def get_date_events(events_date) -> Any:
     """
     Retrieves user events for a given date.
 
     Args:
-        date (str): The date for which to retrieve user events.
+        date (str): The date for which to retrieve user events, ISO 8601 format (YYYY-MM-DD).
 
     Returns:
         json.Any | None: The JSON response containing the user events, or None if the request fails.
     """
     url = "http://35.212.243.98/user-events"
     headers = {"api-token": "BGjvhpFqkIFoBCvD0wwP"}
-    params = {"date": date}
+    params = {"date": events_date}
 
     response = requests.get(url, headers=headers, params=params, timeout=10)
     if response.status_code == 200:
         parse_date_events(response.json())
 
 
-def parse_json_date(json_date_str) -> datetime | None:
+def parse_json_date(json_date_str) -> date | None:
+    """
+    Helper to parse the given JSON date string to a date object, handling ISO 8601 with and without mss. Return the date object (after strp time attributes).
+    """
     if json_date_str is not None:
         try:
             # Handling both ISO 8601 with and without milliseconds (signups and event dates)
-            return datetime.fromisoformat(json_date_str)
+            dt = datetime.fromisoformat(json_date_str)
+            # Return date object strictly (strp time attributes)
+            return dt.date()
         except ValueError:
             return None
 
@@ -90,7 +95,7 @@ def parse_date_events(events_data) -> None:
             # Add the EventMetadata instance to the session
             session.add(event_metadata)
 
-        # Access nested user property attributes and standardize - and _ (admin-dashboard-metabase and explore-companies keys)
+        # Access nested user property attributes and remove hyphens (admin-dashboard-metabase and explore-companies keys)
         user_properties_data = {
             key.replace("-", "_"): value
             for key, value in event_data.get("user_properties").items()

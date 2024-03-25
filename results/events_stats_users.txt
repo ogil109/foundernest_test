@@ -1,0 +1,10 @@
+2024-W01 = Avg Events Per User: 10.39, Max Events Per User: 63, Min Events Per User: 1
+2024-W01 = Avg Events Per User: 10.39, Max Events Per User: 63, Min Events Per User: 1
+2024-W02 = Avg Events Per User: 13.58, Max Events Per User: 75, Min Events Per User: 1
+2024-W02 = Avg Events Per User: 13.58, Max Events Per User: 75, Min Events Per User: 1
+2024-W03 = Avg Events Per User: 11.56, Max Events Per User: 168, Min Events Per User: 1
+2024-W03 = Avg Events Per User: 11.56, Max Events Per User: 168, Min Events Per User: 1
+2024-W04 = Avg Events Per User: 11.34, Max Events Per User: 62, Min Events Per User: 1
+2024-W04 = Avg Events Per User: 11.34, Max Events Per User: 62, Min Events Per User: 1
+2024-W05 = Avg Events Per User: 8.89, Max Events Per User: 56, Min Events Per User: 1
+2024-W05 = Avg Events Per User: 8.89, Max Events Per User: 56, Min Events Per User: 1

@@ -9,4 +9,4 @@ services:
     environment:
       DATABASE_URI: "sqlite:////results/database.db"
       DATABASE_PATH: "/results/database.db"
-      API_TOKEN: "" # TODO: Put API token here, between the quotes
+      API_TOKEN: "BGjvhpFqkIFoBCvD0wwP" # TODO: Put API token here, between the quotes

@@ -137,7 +137,9 @@ def parse_date_events(events_data) -> None:
         try:
             session.commit()
         except Exception as e:
-            print(f"An error occurred ({e}) saving event: {event.amp_id}")
+            print(
+                f"An error occurred ({e}) saving event: {event.event_time} for user: {event.user_id}."
+            )
             session.rollback()
 
     session.close()

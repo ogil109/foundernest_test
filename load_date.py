@@ -1,4 +1,14 @@
 def cursor_count(cursor_passed, date_passed):
+    """
+    Executes a SQL query to count the number of events with a specific date.
+
+    Args:
+        cursor_passed (sqlite3.Cursor): The cursor object used to execute the query.
+        date_passed (datetime.date): The date to count the events for.
+
+    Returns:
+        int: The number of events with the specified date. Returns 0 if no events are found.
+    """
     cursor_passed.execute(
         "SELECT COUNT(*) FROM events WHERE date = ?",
         (date_passed.strftime("%Y-%m-%d"),),
@@ -39,5 +49,5 @@ if __name__ == "__main__":
 
     print(f"\nData loaded for {date}.\n")
     print(
-        f"Events prior to load: {before}\nEvents after load: {after}\n\nTotal events saved: {after - before}"
+        f"Events prior to load: {before}\nEvents after load: {after}\nNew events: {after - before}\n"
     )

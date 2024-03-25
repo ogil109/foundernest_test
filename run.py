@@ -8,8 +8,11 @@ from app.database.transformation import (
     get_weekly_active_users,
 )
 
+# Date range to load data from
 start_date = datetime(2024, 1, 1)
 end_date = datetime(2024, 1, 31)
+
+# Load data and save to db
 load_data(start_date, end_date)
 
 # Insertions and stats

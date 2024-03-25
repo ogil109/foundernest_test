@@ -5,7 +5,7 @@ git clone https://github.com/ogil109/foundernest_test.git
 
 # Usage
 
-## Add the API-TOKEN modifying docker-compose.yml
+## IMPORTANT: Add the API-TOKEN modifying docker-compose.yml
 - Will set API-TOKEN as env variable to use it as header in the request to the endpoint.
 
 ## Execute:

@@ -15,9 +15,11 @@ def cursor_count(cursor_passed, date_passed):
     )
 
     result = cursor_passed.fetchone()
+    # Handle days with no events
     if result is not None:
         return result[0]
 
+    # In case of no events, return 0 instead of None
     return 0
 
 

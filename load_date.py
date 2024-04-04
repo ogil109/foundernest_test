@@ -1,6 +1,6 @@
 def cursor_count(cursor_passed, date_passed):
     """
-    Executes a SQL query to count the number of events with a specific date.
+    Executes a SQL query to count the number of events within a specific date.
 
     Args:
         cursor_passed (sqlite3.Cursor): The cursor object used to execute the query.
@@ -37,13 +37,13 @@ if __name__ == "__main__":
         print("\nInvalid format. Provide date in ISO format (YYYY-MM-DD)\n")
         sys.exit(1)
 
-    # Get events for date before loading
+    # Get events for date before loading/updating
     db_path = os.getenv("DATABASE_PATH", "/results/database.db")
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     before = cursor_count(cursor, date)
 
-    # Loading data for date
+    # Loading data for date (parse_date_events() will handle duplicates in case of multiple calls for the same date)
     load_data(date, date)
 
     # Get events for date after loading

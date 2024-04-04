@@ -4,7 +4,7 @@ import sqlite3
 db_path = os.getenv("DATABASE_PATH", "/results/database.db")
 
 
-def get_weekly_active_users() -> None:
+def get_weekly_active_users(week_to_process: str) -> None:
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
@@ -23,11 +23,12 @@ def get_weekly_active_users() -> None:
         user_id
     FROM events
     WHERE user_corporate_is_demo = 0 AND user_corporate_status = 'active'
+    AND strftime('%Y-W%W', date) = ?
     GROUP BY week, user_id
     ORDER BY week;
     """
 
-    cursor.execute(insert_query)
+    cursor.execute(insert_query, (week_to_process,))
     conn.commit()
 
     # Fetch and write txt file counting weekly active users (no need to use DISTINCT since insert clausule aggregates by user_id)
@@ -43,7 +44,7 @@ def get_weekly_active_users() -> None:
     conn.close()
 
 
-def get_weekly_active_corporate_users() -> None:
+def get_weekly_active_corporate_users(week_to_process: str) -> None:
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
@@ -59,15 +60,16 @@ def get_weekly_active_corporate_users() -> None:
     insert_query = """
     INSERT INTO weekly_active_corporate_users(week, user_corporate_id)
     SELECT
-        strftime('%Y-W%W', e.date) AS week,
+        strftime('%Y-W%W', date) AS week,
         user_corporate_id
     FROM events
     WHERE user_corporate_is_demo = 0 AND user_corporate_status = 'active'
+    AND strftime('%Y-W%W', date) = ?
     GROUP BY week, user_corporate_id
     ORDER BY week;
     """
 
-    cursor.execute(insert_query)
+    cursor.execute(insert_query, (week_to_process,))
     conn.commit()
 
     # Fetch and write txt file counting weekly active corporate users (no need to use DISTINCT since insert clausule aggregates by user_corporate_id)
@@ -85,7 +87,7 @@ def get_weekly_active_corporate_users() -> None:
     conn.close()
 
 
-def events_stats_users() -> None:
+def events_stats_users(week_to_process: str) -> None:
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
@@ -107,6 +109,7 @@ def events_stats_users() -> None:
             COUNT(*) AS events_count
         FROM events
         WHERE user_corporate_is_demo = 0 AND user_corporate_status = 'active'
+        AND strftime('%Y-W%W', date) = ?
         GROUP BY user_id, week
     ),
     Week_Stats AS (
@@ -124,7 +127,7 @@ def events_stats_users() -> None:
     ORDER BY week;
     """
 
-    cursor.execute(insert_query)
+    cursor.execute(insert_query, (week_to_process,))
     conn.commit()
 
     # Fetch and write txt file
@@ -142,7 +145,7 @@ def events_stats_users() -> None:
     conn.close()
 
 
-def events_stats_corporate_users() -> None:
+def events_stats_corporate_users(week_to_process: str) -> None:
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
@@ -164,6 +167,7 @@ def events_stats_corporate_users() -> None:
             COUNT(*) AS events_count
         FROM events
         WHERE user_corporate_is_demo = 0 AND user_corporate_status = 'active'
+        AND strftime('%Y-W%W', date) = ?
         GROUP BY user_corporate_id, week
     ),
     Corporate_Week_Stats AS (
@@ -181,7 +185,7 @@ def events_stats_corporate_users() -> None:
     ORDER BY week;
     """
 
-    cursor.execute(insert_query)
+    cursor.execute(insert_query, (week_to_process,))
     conn.commit()
 
     # Fetch and write txt file

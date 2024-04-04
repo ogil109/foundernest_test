@@ -9,15 +9,6 @@ from app.database.session_factory import get_session
 
 
 def get_date_events(events_date) -> bool | None:
-    """
-    Retrieves user events for a given date.
-
-    Args:
-        date (str): The date for which to retrieve user events, ISO 8601 format (YYYY-MM-DD).
-
-    Returns:
-        json.Any | None: The JSON response containing the user events, or None if the request fails.
-    """
     url = "http://35.212.243.98/user-events"
     headers = {"api-token": os.getenv("API_TOKEN")}
     params = {"date": events_date}
@@ -48,10 +39,13 @@ def parse_json_date(json_date_str) -> date | None:
 
 def parse_date_events(events_data) -> bool:
     """
-    Parses events from JSON data (list of objects) and creates Event, EventMetadata, and EventUserProperties instances.
+    Parses the events data and saves the event instances to the database.
 
     Args:
-        events_data (json): The JSON response containing a list of objects representing the user events for a given date.
+        events_data: A list of event data for a given date containing information such as event_time, user_id, user_properties, and event metadata.
+
+    Returns:
+        bool: True if any event instance is committed, False otherwise.
     """
     session = get_session()
 

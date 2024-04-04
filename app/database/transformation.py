@@ -16,6 +16,7 @@ def get_weekly_active_users() -> None:
     )"""
     )
 
+    # Duplicates are eliminated grouping by user_id
     insert_query = """
     INSERT INTO weekly_active_users(week, user_id)
     SELECT
@@ -54,6 +55,7 @@ def get_weekly_active_corporate_users() -> None:
     )"""
     )
 
+    # Duplicates are eliminated grouping by user_corporate_id
     insert_query = """
     INSERT INTO weekly_active_corporate_users(week, user_corporate_id)
     SELECT

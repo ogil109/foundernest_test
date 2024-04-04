@@ -9,7 +9,7 @@ from app.database.models import Event, EventMetadata, UserProperties
 from app.database.session_factory import get_session
 
 
-def get_date_events(events_date) -> Any:
+def get_date_events(events_date) -> bool | None:
     """
     Retrieves user events for a given date.
 
@@ -25,7 +25,9 @@ def get_date_events(events_date) -> Any:
 
     response = requests.get(url, headers=headers, params=params, timeout=10)
     if response.status_code == 200:
-        parse_date_events(response.json())
+        return bool(
+            parse_date_events(response.json())
+        )  # Will return False if there are no events
 
 
 def parse_json_date(json_date_str) -> date | None:
@@ -45,7 +47,7 @@ def parse_json_date(json_date_str) -> date | None:
     return None
 
 
-def parse_date_events(events_data) -> None:
+def parse_date_events(events_data) -> bool:
     """
     Parses events from JSON data (list of objects) and creates Event, EventMetadata, and UserProperties instances.
 
@@ -53,6 +55,10 @@ def parse_date_events(events_data) -> None:
         events_data (json): The JSON response containing a list of objects representing the user events for a given date.
     """
     session = get_session()
+
+    # Default value for events saved
+    events_saved = False
+
     for event_data in events_data:
         # Handle event duplicates (same event_time and user_id)
         if not Event.get_by_event_time_and_user_id(
@@ -136,6 +142,7 @@ def parse_date_events(events_data) -> None:
         # Commit the session to save the instances to the database (for every event for debugging)
         try:
             session.commit()
+            events_saved = True  # Reassign value if commit is successful
         except Exception as e:
             print(
                 f"An error occurred ({e}) saving event: {event.event_time} for user: {event.user_id}."
@@ -143,3 +150,4 @@ def parse_date_events(events_data) -> None:
             session.rollback()
 
     session.close()
+    return events_saved

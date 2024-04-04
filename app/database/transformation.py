@@ -16,13 +16,13 @@ def get_weekly_active_users() -> None:
     )"""
     )
 
-    # Duplicates are eliminated grouping by user_id
     insert_query = """
     INSERT INTO weekly_active_users(week, user_id)
     SELECT
         strftime('%Y-W%W', date) AS week,
         user_id
     FROM events
+    WHERE user_corporate_is_demo = 0 AND user_corporate_status = 'active'
     GROUP BY week, user_id
     ORDER BY week;
     """
@@ -30,7 +30,7 @@ def get_weekly_active_users() -> None:
     cursor.execute(insert_query)
     conn.commit()
 
-    # Fetch and write txt file counting weekly active users
+    # Fetch and write txt file counting weekly active users (no need to use DISTINCT since insert clausule aggregates by user_id)
     select_query = "SELECT week, COUNT(user_id) FROM weekly_active_users GROUP BY week ORDER BY week;"
     cursor.execute(select_query)
     results = cursor.fetchall()
@@ -60,17 +60,17 @@ def get_weekly_active_corporate_users() -> None:
     INSERT INTO weekly_active_corporate_users(week, user_corporate_id)
     SELECT
         strftime('%Y-W%W', e.date) AS week,
-        up.user_corporate_id
-    FROM events e
-    INNER JOIN user_properties up ON e.user_id = up.user_id
-    GROUP BY week, up.user_corporate_id
+        user_corporate_id
+    FROM events
+    WHERE user_corporate_is_demo = 0 AND user_corporate_status = 'active'
+    GROUP BY week, user_corporate_id
     ORDER BY week;
     """
 
     cursor.execute(insert_query)
     conn.commit()
 
-    # Fetch and write txt file counting weekly active corporate users
+    # Fetch and write txt file counting weekly active corporate users (no need to use DISTINCT since insert clausule aggregates by user_corporate_id)
     select_query = "SELECT week, COUNT(user_corporate_id) FROM weekly_active_corporate_users GROUP BY week ORDER BY week;"
     cursor.execute(select_query)
     results = cursor.fetchall()
@@ -106,6 +106,7 @@ def events_stats_users() -> None:
             strftime('%Y-W%W', date) AS week,
             COUNT(*) AS events_count
         FROM events
+        WHERE user_corporate_is_demo = 0 AND user_corporate_status = 'active'
         GROUP BY user_id, week
     ),
     Week_Stats AS (
@@ -158,12 +159,12 @@ def events_stats_corporate_users() -> None:
     insert_query = """
     WITH Corporate_Week_Events AS (
         SELECT
-            up.user_corporate_id,
+            user_corporate_id,
             strftime('%Y-W%W', date) AS week,
             COUNT(*) AS events_count
-        FROM events e
-        INNER JOIN user_properties up ON e.user_id = up.user_id
-        GROUP BY up.user_corporate_id, week
+        FROM events
+        WHERE user_corporate_is_demo = 0 AND user_corporate_status = 'active'
+        GROUP BY user_corporate_id, week
     ),
     Corporate_Week_Stats AS (
         SELECT

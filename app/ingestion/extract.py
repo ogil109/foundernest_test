@@ -1,11 +1,10 @@
 import json
 import os
 from datetime import date, datetime
-from typing import Any
 
 import requests
 
-from app.database.models import Event, EventMetadata, UserProperties
+from app.database.models import Event, EventMetadata
 from app.database.session_factory import get_session
 
 
@@ -49,14 +48,14 @@ def parse_json_date(json_date_str) -> date | None:
 
 def parse_date_events(events_data) -> bool:
     """
-    Parses events from JSON data (list of objects) and creates Event, EventMetadata, and UserProperties instances.
+    Parses events from JSON data (list of objects) and creates Event, EventMetadata, and EventUserProperties instances.
 
     Args:
         events_data (json): The JSON response containing a list of objects representing the user events for a given date.
     """
     session = get_session()
 
-    # Default value for events saved
+    # Default value for events saved (will be set to True if any event instance is committed)
     events_saved = False
 
     for event_data in events_data:
@@ -64,6 +63,12 @@ def parse_date_events(events_data) -> bool:
         if not Event.get_by_event_time_and_user_id(
             session, event_data.get("event_time"), event_data.get("user_id")
         ):
+            # Create a dictionary of user properties for retrieval
+            user_properties_data = {
+                key.replace("-", "_"): value
+                for key, value in event_data.get("user_properties").items()
+            }
+
             # Create an Event instance for each unique object in JSON data
             event = Event(
                 # Event ID
@@ -73,45 +78,12 @@ def parse_date_events(events_data) -> bool:
                 amp_id=event_data.get("amp_id"),
                 device_id=event_data.get("device_id"),
                 app=event_data.get("app"),
-                # Time
                 date=parse_json_date(event_data.get("date")),
-                client_event_time=event_data.get("client_event_time"),
-                client_upload_time=event_data.get("client_upload_time"),
-                processed_time=event_data.get("processed_time"),
-                server_upload_time=event_data.get("server_upload_time"),
-                server_received_time=event_data.get("server_received_time"),
                 # Location
                 country=event_data.get("country"),
                 region=event_data.get("region"),
                 city=event_data.get("city"),
                 language=event_data.get("language"),
-            )
-
-            # Add the Event instance to the session
-            session.add(event)
-
-            event_metadata = EventMetadata(
-                event_time=event_data.get("event_time"),
-                user_id=event_data.get("user_id"),
-                # Event metadata
-                data_type=event_data.get("data_type"),
-                event_type=event_data.get("event_type"),
-                data=json.dumps(event_data.get("data")),
-            )
-
-            # Add the EventMetadata instance to the session
-            session.add(event_metadata)
-
-        # Access nested user property attributes and remove hyphens (admin-dashboard-metabase and explore-companies keys)
-        user_properties_data = {
-            key.replace("-", "_"): value
-            for key, value in event_data.get("user_properties").items()
-        }
-        # Create an UserProperties instance if it doesn't exist already
-        if not UserProperties.get_by_user_id(session, event_data.get("user_id")):
-            user_properties = UserProperties(
-                # User ID
-                user_id=event_data.get("user_id"),
                 # User properties
                 admin_dashboard_metabase=user_properties_data.get(
                     "admin_dashboard_metabase"
@@ -136,8 +108,26 @@ def parse_date_events(events_data) -> bool:
                 user_status=user_properties_data.get("user_status"),
             )
 
-            # Add the UserProperties instance to the session
-            session.add(user_properties)
+            # Add the Event instance to the session
+            session.add(event)
+
+            event_metadata = EventMetadata(
+                event_time=event_data.get("event_time"),
+                user_id=event_data.get("user_id"),
+                # Event metadata
+                data_type=event_data.get("data_type"),
+                event_type=event_data.get("event_type"),
+                data=json.dumps(event_data.get("data")),
+                # Timestamps
+                client_event_time=event_data.get("client_event_time"),
+                client_upload_time=event_data.get("client_upload_time"),
+                processed_time=event_data.get("processed_time"),
+                server_upload_time=event_data.get("server_upload_time"),
+                server_received_time=event_data.get("server_received_time"),
+            )
+
+            # Add the EventMetadata instance to the session
+            session.add(event_metadata)
 
         # Commit the session to save the instances to the database (for every event for debugging)
         try:

@@ -4,6 +4,7 @@ from sqlalchemy import (
     Boolean,
     Column,
     Date,
+    DateTime,
     ForeignKey,
     Integer,
     String,
@@ -24,39 +25,13 @@ class Event(Base):
     amp_id = Column(BigInteger)
     device_id = Column(String)
     app = Column(Integer)
-
-    # Time attributes
-    date = Column(
-        Date
-    )
-    client_event_time = Column(BigInteger)
-    client_upload_time = Column(BigInteger)
-    processed_time = Column(BigInteger)
-    server_upload_time = Column(BigInteger)
-    server_received_time = Column(BigInteger)
+    date = Column(Date)
 
     # Location attributes
     country = Column(String)
     region = Column(String)
     city = Column(String)
     language = Column(String)
-
-    @classmethod
-    def get_by_event_time_and_user_id(cls, session, event_time, user_id):
-        # Class method to fetch an instance by event_time and user_id
-        return (
-            session.query(cls)
-            .filter_by(event_time=event_time, user_id=user_id)
-            .one_or_none()
-        )
-
-
-# Assuming user properties are fixed and not dynamic for every event
-class UserProperties(Base):
-    __tablename__ = "user_properties"
-
-    # User ID
-    user_id = Column(BigInteger, ForeignKey("events.user_id"), primary_key=True)
 
     # User properties
     admin_dashboard_metabase = Column(Boolean)
@@ -74,9 +49,13 @@ class UserProperties(Base):
     user_status = Column(String)
 
     @classmethod
-    def get_by_user_id(cls, session, user_id):
-        # ORM method to get UserProperties instance by user ID using passed in session
-        return session.query(cls).filter_by(user_id=user_id).one_or_none()
+    def get_by_event_time_and_user_id(cls, session, event_time, user_id):
+        # Class method to fetch an instance by event_time and user_id
+        return (
+            session.query(cls)
+            .filter_by(event_time=event_time, user_id=user_id)
+            .one_or_none()
+        )
 
 
 class EventMetadata(Base):
@@ -92,3 +71,11 @@ class EventMetadata(Base):
 
     # Nested data column
     data = Column(JSON)
+
+    # Timestamps
+    client_event_time = Column(BigInteger)
+    client_upload_time = Column(BigInteger)
+    processed_time = Column(BigInteger)
+    server_upload_time = Column(BigInteger)
+    server_received_time = Column(BigInteger)
+    loaded_at = Column(DateTime, server_default="func.now()")

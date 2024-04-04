@@ -20,7 +20,7 @@ from app.database.transformation import (
     get_weekly_active_users,
 )
 
-# Check if given week has already been processed
+# Database connection and cursor init
 db_path = os.getenv("DATABASE_PATH", "/results/database.db")
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
@@ -30,7 +30,6 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS processed_weeks (week TEXT)""")
 def is_week_already_processed(week_to_check) -> bool:
     cursor.execute("SELECT week FROM processed_weeks WHERE week = ?", (week_to_check,))
     result = cursor.fetchone()
-    conn.close()
     if result:
         print(f"\nWeek {week_to_check} has already been processed.\n")
         return True
@@ -41,7 +40,6 @@ def is_week_already_processed(week_to_check) -> bool:
 def mark_week_as_processed(week_to_mark):
     cursor.execute("INSERT INTO processed_weeks (week) VALUES (?)", (week_to_mark,))
     conn.commit()
-    conn.close()
 
 
 if __name__ == "__main__":
@@ -59,6 +57,9 @@ if __name__ == "__main__":
         )
         sys.exit(1)
 
+    # Reopen connection if closed from previous run
+    conn = sqlite3.connect(db_path)
+
     # Check if week has already been processed, if not, process it
     if not is_week_already_processed(week_to_process):
         events_stats_users(week_to_process)
@@ -67,3 +68,5 @@ if __name__ == "__main__":
         get_weekly_active_corporate_users(week_to_process)
         # Mark week as processed
         mark_week_as_processed(week_to_process)
+
+    conn.close()
